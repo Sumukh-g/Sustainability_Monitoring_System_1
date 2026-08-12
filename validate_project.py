@@ -108,7 +108,7 @@ def main() -> int:
         checks["Recommendation runtime"] = False
     dashboard_files = [Path("app.py"), *Path("pages").glob("*.py")]
     checks["Streamlit application"] = len(dashboard_files) >= 11 and all(
-        path.read_text().strip() for path in dashboard_files
+        path.read_text(encoding="utf-8").strip() for path in dashboard_files
     )
     checks["Documentation"] = all(
         Path(p).exists()

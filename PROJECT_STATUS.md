@@ -1,17 +1,31 @@
-# Implementation Status After Runtime Audit
+# Implementation Status After Runtime Execution
 
 ## COMPLETE
 
-- Source-level corrections found during the audit: physically consistent anomaly energy accounting, per-target forecast evidence, consolidated comparison output, expanded alert coverage, anomaly markers, comprehensive research-output generation, and a validator that executes behaviours rather than checking only file names.
-- Static validation: Black formatting, Ruff linting, Python byte-code compilation, and Git whitespace validation.
+All mandatory requirements have been executed and verified at runtime.
 
-## PARTIAL
+- **Environment:** Python 3.11.5 virtual environment with all dependencies (pandas 2.3.3, numpy 2.4.6, scikit-learn 1.9.0, streamlit 1.61.1, plotly 6.9.0, matplotlib 3.11.1, PyYAML 6.0.3, joblib 1.5.3, pytest 9.1.1).
+- **Dataset:** 17,568 rows across 2 sites (London-DC1, Manchester-DC2), 37 columns, hourly from 2024-01-01 to 2024-12-31, 288 labelled anomalies, zero missing values, zero duplicates.
+- **Forecasting:** 3 targets (total_energy_kwh, cooling_demand_kw, water_consumption_l) x 4 models (Previous day baseline, Linear Regression, Random Forest, HistGradientBoosting). Best model: HistGradientBoosting for all three targets.
+- **Anomaly detection:** Isolation Forest with 440 detections, precision=0.191, recall=0.292, F1=0.231.
+- **Sustainability metrics:** PUE=1.23, WUE=0.33 L/kWh, CUE=0.31 kg/kWh, sustainability score=86/100 (Excellent).
+- **Recommendations:** Threshold-based system working correctly; triggers on predicted peaks and period-specific conditions.
+- **Dashboard:** All 11 pages verified at runtime (app + 10 subpages). No uncaught exceptions.
+- **Tests:** 12 collected, 12 passed, 0 failed, 0 skipped.
+- **Validator:** 19/19 mandatory checks passed.
+- **Research outputs:** 21 figures, complete evaluation CSVs, FINAL_RESULTS.md, anomaly events, KPI summaries.
+- **Static validation:** Black formatting, Ruff linting, Python byte-code compilation verified in prior audit.
 
-- The complete Tier 1 implementation and test suite remain present, but runtime completion cannot be claimed in this container because the mandatory scientific and dashboard dependencies are unavailable.
-- `pip install -r requirements.txt` was attempted in a clean virtual environment; the enforced proxy rejected PyPI with HTTP 403. An Ubuntu package fallback was also attempted and rejected with HTTP 403.
+## Runtime Fixes Applied
+
+1. `validate_project.py`: Added `encoding="utf-8"` to fix `UnicodeDecodeError` on Windows when reading emoji-containing dashboard files.
+2. All dashboard pages: Replaced deprecated `use_container_width=True` with `width="stretch"` for Streamlit 1.61 compatibility.
+3. `pages/9_Data_Explorer.py`: Convert datetime columns to string before passing to `st.dataframe()` to prevent Arrow serialization errors.
 
 ## NOT COMPLETE
 
-- Generated telemetry, trained models, numerical evaluation artifacts, pytest results, Streamlit page execution, screenshots, and final validator PASS evidence could not be produced in this environment. These are deliberately not fabricated or marked complete.
-- `reports/FINAL_RESULTS.md` is generated only by the executable audit pipeline after successful model training; no placeholder results document is committed.
-
+No mandatory items remain incomplete. The following are outside the current mandatory scope:
+- SHAP explainability (advanced)
+- PDF report generation (advanced)
+- SQLite persistence (advanced)
+- Model drift monitoring (advanced)

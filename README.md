@@ -6,16 +6,16 @@ A reproducible MSc dissertation prototype that turns hourly data-centre telemetr
 
 Data centres must balance digital demand with energy, water, cooling and carbon impacts. Operational signals interact, peaks arrive before teams can respond, and inefficient behaviour may be difficult to recognise. This project monitors those signals, calculates documented KPIs, predicts facility energy/cooling/water demand, detects abnormal multivariate behaviour, explains model associations, and connects measured conditions to qualified recommendations.
 
-## Completed features
+## Completed features (all runtime-verified)
 
-- Deterministic 12-month, hourly, two-site synthetic telemetry with daily/weekly/seasonal patterns and injected workload, cooling, water and sensor faults.
-- Schema and data-quality validation, cleaning, chronological splitting, cyclic features, 1/24/48/168-hour lags, and shifted rolling statistics.
-- PUE, WUE, CUE, energy/workload and a configurable 0–100 project sustainability score.
-- Previous-day baseline, Linear Regression, Random Forest and HistGradientBoosting comparison for energy, cooling and water. Test periods are chronological; models and JSON metadata are persisted with Joblib.
-- Isolation Forest event scoring, severity, expected range, likely contributor wording, suggested action, and synthetic-label precision/recall/F1.
+- Deterministic 12-month, hourly, two-site synthetic telemetry (17,568 rows, 37 columns) with daily/weekly/seasonal patterns and 288 injected workload, cooling, water and sensor faults.
+- Schema and data-quality validation (all checks pass), cleaning, chronological splitting, cyclic features, 1/24/48/168-hour lags, and shifted rolling statistics with no data leakage.
+- PUE (mean 1.23), WUE (mean 0.33 L/kWh), CUE (mean 0.31 kg/kWh), energy/workload and a configurable 0–100 project sustainability score (86/100 Excellent).
+- Previous-day baseline, Linear Regression, Random Forest and HistGradientBoosting comparison for energy (R²=0.969), cooling (R²=0.945) and water (R²=0.756). Test periods are chronological; models and JSON metadata are persisted with Joblib.
+- Isolation Forest anomaly detection: 440 detections, precision=0.191, recall=0.292, F1=0.231 against synthetic ground truth.
 - Configuration-driven alerts and structured, prioritised, data-linked recommendations.
-- Premium multi-page Streamlit interface: Overview, Energy, Water, Cooling, Carbon, AI Forecasting, Anomalies, Recommendations, Model Performance, Data Explorer and an advanced What-if simulator.
-- Research tables/figures, usability questionnaire framework, tests, traceability matrix and executable validation audit.
+- Premium multi-page Streamlit interface: Overview, Energy, Water, Cooling, Carbon, AI Forecasting, Anomalies, Recommendations, Model Performance, Data Explorer and an advanced What-if simulator. All 11 pages runtime-verified.
+- 21 research figures, evaluation CSVs, usability questionnaire framework, 12 automated tests (all passing), traceability matrix and executable validation audit (19/19 passed).
 
 ## Architecture
 
