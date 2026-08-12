@@ -2,7 +2,13 @@
 
 from pathlib import Path
 import sys
+import json
+import joblib
+import yaml
+import pandas as pd
+from src.anomaly_detection import detect_anomalies
 from src.data_loader import load_data, REQUIRED_COLUMNS, validate_data
+from src.recommendations import generate_recommendations
 from src.sustainability_metrics import calculate_pue, calculate_wue, calculate_cue
 
 
@@ -57,17 +63,53 @@ def main() -> int:
         )
         == 0.3
     )
-    checks["Forecast model"] = Path(
-        "models/forecasting/total_energy_kwh.joblib"
-    ).exists()
+    targets = ["total_energy_kwh", "cooling_demand_kw", "water_consumption_l"]
+    model_paths = [
+        Path("models/forecasting") / f"{target}.joblib" for target in targets
+    ]
+    metadata_paths = [Path("models/metadata") / f"{target}.json" for target in targets]
+    checks["Forecast models"] = all(path.exists() for path in model_paths)
+    checks["Forecast models reload"] = (
+        all(
+            joblib.load(path).get("target") == target
+            for path, target in zip(model_paths, targets)
+        )
+        if checks["Forecast models"]
+        else False
+    )
+    checks["Model metadata"] = all(
+        path.exists() and json.loads(path.read_text()).get("target") == target
+        for path, target in zip(metadata_paths, targets)
+    )
     checks["Model evaluation"] = Path(
         "reports/evaluation/model_comparison.csv"
     ).exists()
     checks["Anomaly model"] = Path(
         "models/anomaly_detection/isolation_forest.joblib"
     ).exists()
-    checks["Recommendation module"] = Path("src/recommendations.py").exists()
-    checks["Streamlit application"] = Path("app.py").exists()
+    if data is not None:
+        _, events, _, metrics = detect_anomalies(data.head(min(2000, len(data))))
+        checks["Anomaly runtime output"] = (
+            bool(metrics)
+            and not events.empty
+            and {
+                "severity",
+                "affected_metric",
+                "suggested_action",
+            }
+            <= set(events)
+        )
+        thresholds = yaml.safe_load(Path("config/thresholds.yaml").read_text())
+        checks["Recommendation runtime"] = isinstance(
+            generate_recommendations(data, thresholds), pd.DataFrame
+        )
+    else:
+        checks["Anomaly runtime output"] = False
+        checks["Recommendation runtime"] = False
+    dashboard_files = [Path("app.py"), *Path("pages").glob("*.py")]
+    checks["Streamlit application"] = len(dashboard_files) >= 11 and all(
+        path.read_text().strip() for path in dashboard_files
+    )
     checks["Documentation"] = all(
         Path(p).exists()
         for p in [
@@ -78,6 +120,8 @@ def main() -> int:
         ]
     )
     checks["Tests"] = len(list(Path("tests").glob("test_*.py"))) >= 5
+    checks["Final research results"] = Path("reports/FINAL_RESULTS.md").exists()
+    checks["Research figures"] = len(list(Path("reports/figures").glob("*.png"))) >= 14
     for name, passed in checks.items():
         print(f"[{'PASS' if passed else 'FAIL'}] {name}")
     passed = sum(checks.values())

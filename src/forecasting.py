@@ -118,7 +118,9 @@ def train_models(
         "test_samples": len(test),
     }
     (out / "metadata" / f"{target}.json").write_text(json.dumps(metadata, indent=2))
-    table.to_csv("reports/evaluation/model_comparison.csv", index=False)
+    table.to_csv(
+        Path("reports/evaluation") / f"model_comparison_{target}.csv", index=False
+    )
     pd.DataFrame(
         {
             "timestamp": test.timestamp,
@@ -126,7 +128,7 @@ def train_models(
             "predicted": predictions[selected],
             "residual": y_test - predictions[selected],
         }
-    ).to_csv("reports/evaluation/test_predictions.csv", index=False)
+    ).to_csv(Path("reports/evaluation") / f"test_predictions_{target}.csv", index=False)
     return table, metadata
 
 
@@ -147,11 +149,17 @@ def predict_test(
 
 def main() -> None:
     data = load_data()
+    comparisons = []
     for target in ("total_energy_kwh", "cooling_demand_kw", "water_consumption_l"):
         table, meta = train_models(data, target)
+        table["Selected"] = table["Model"].eq(meta["model_name"])
+        comparisons.append(table)
         print(
             f"{target}: {meta['model_name']} RMSE={meta['rmse']:.3f} R2={meta['r2']:.3f}"
         )
+    pd.concat(comparisons, ignore_index=True).to_csv(
+        "reports/evaluation/model_comparison.csv", index=False
+    )
 
 
 if __name__ == "__main__":

@@ -90,6 +90,34 @@ def detect_anomalies(
                 enriched["anomaly_ground_truth"], enriched["detected_anomaly"]
             ).tolist(),
             "detected": int(enriched["detected_anomaly"].sum()),
+            "true_negative": int(
+                confusion_matrix(
+                    enriched["anomaly_ground_truth"],
+                    enriched["detected_anomaly"],
+                    labels=[0, 1],
+                )[0, 0]
+            ),
+            "false_positive": int(
+                confusion_matrix(
+                    enriched["anomaly_ground_truth"],
+                    enriched["detected_anomaly"],
+                    labels=[0, 1],
+                )[0, 1]
+            ),
+            "false_negative": int(
+                confusion_matrix(
+                    enriched["anomaly_ground_truth"],
+                    enriched["detected_anomaly"],
+                    labels=[0, 1],
+                )[1, 0]
+            ),
+            "true_positive": int(
+                confusion_matrix(
+                    enriched["anomaly_ground_truth"],
+                    enriched["detected_anomaly"],
+                    labels=[0, 1],
+                )[1, 1]
+            ),
         }
     if model_path:
         Path(model_path).parent.mkdir(parents=True, exist_ok=True)

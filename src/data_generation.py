@@ -91,16 +91,18 @@ def generate_data(
             anomaly[indices] = 1
             anomaly_type[indices] = kind
             if kind == "Workload spike":
+                previous = it_energy[indices].copy()
                 it_energy[indices] *= 1.45
-                facility[indices] += it_energy[indices] * 0.25
+                facility[indices] += it_energy[indices] - previous
             elif kind == "Cooling fault":
                 cooling_efficiency[indices] *= 0.55
+                previous = cooling_energy[indices].copy()
                 cooling_energy[indices] *= 1.7
-                facility[indices] += cooling_energy[indices] * 0.7
+                facility[indices] += cooling_energy[indices] - previous
             elif kind == "Water leak":
                 water[indices] *= 2.6
             else:
-                external_temp[indices] += 25
+                external_temp[indices] = np.minimum(external_temp[indices] + 25, 58)
         maintenance[
             rng.choice(periods, size=max(5, periods // 1000), replace=False)
         ] = 1

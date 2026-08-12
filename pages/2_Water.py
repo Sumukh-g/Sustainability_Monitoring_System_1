@@ -8,15 +8,21 @@ d, _ = filtered_data()
 if d.empty:
     st.stop()
 c1, c2 = st.columns(2)
-c1.plotly_chart(
-    px.line(
-        d,
-        x="timestamp",
-        y=["water_consumption_l", "cooling_water_l"],
-        title="Water consumption",
-    ),
-    use_container_width=True,
+water_figure = px.line(
+    d,
+    x="timestamp",
+    y=["water_consumption_l", "cooling_water_l"],
+    title="Water consumption",
 )
+water_events = d[(d.anomaly_ground_truth == 1) & (d.anomaly_type == "Water leak")]
+water_figure.add_scatter(
+    x=water_events.timestamp,
+    y=water_events.water_consumption_l,
+    mode="markers",
+    name="Injected water event",
+    marker={"color": "#d62728", "size": 9},
+)
+c1.plotly_chart(water_figure, use_container_width=True)
 c2.plotly_chart(
     px.scatter(
         d,

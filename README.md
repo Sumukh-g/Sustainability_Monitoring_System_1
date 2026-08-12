@@ -61,12 +61,13 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python -m src.data_generation
 python -m src.forecasting
-python -c "from src.data_loader import load_data; from src.anomaly_detection import detect_anomalies; detect_anomalies(load_data(), model_path='models/anomaly_detection/isolation_forest.joblib')"
-python -c "from src.evaluation import create_research_figures; create_research_figures()"
+python -m src.audit_pipeline
 pytest
 python validate_project.py
 streamlit run app.py
 ```
+
+`src.audit_pipeline` executes anomaly evaluation, model reload-based figures, data-quality and realism reports, recommendation evidence, and writes `reports/FINAL_RESULTS.md` from calculated values. The validator intentionally fails if those runtime artifacts are absent.
 
 Use the sidebar date/site/aggregation controls. A refresh button invalidates the data cache. Missing data/models produce actionable dashboard messages rather than retraining or silently substituting values.
 
@@ -90,4 +91,3 @@ Only schema-checked CSV input is supported; arbitrary code or unsafe object uplo
 ## Future work (not claimed complete)
 
 Validate against metered multi-facility data; perform approved participant usability testing; add robust probabilistic intervals, drift monitoring, authenticated persistence and audited workload orchestration integrations.
-

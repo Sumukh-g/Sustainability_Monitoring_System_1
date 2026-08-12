@@ -17,6 +17,19 @@ def active_alerts(data: pd.DataFrame, thresholds: dict) -> list[str]:
         > thresholds["carbon_intensity_high_g_per_kwh"]
     ):
         alerts.append("Grid carbon intensity is high")
+    history = data.sort_values("timestamp").iloc[:-1]
+    if not history.empty:
+        for column, label in [
+            ("total_energy_kwh", "Facility energy"),
+            ("water_consumption_l", "Water consumption"),
+            ("cooling_demand_kw", "Cooling demand"),
+        ]:
+            reference = history[column].quantile(thresholds["energy_peak_percentile"])
+            if latest[column] > reference:
+                alerts.append(
+                    f"{label} exceeds its historical "
+                    f"{thresholds['energy_peak_percentile']:.0%} reference"
+                )
     if latest.get("detected_anomaly", 0):
         alerts.append("AI anomaly detected at latest observation")
     return alerts

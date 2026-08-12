@@ -91,7 +91,7 @@ def validate_data(data: pd.DataFrame) -> pd.DataFrame:
             "sensor_range",
             data["external_temperature_c"].between(-30, 60).all(),
             int((~data["external_temperature_c"].between(-30, 60)).sum()),
-            "Expected -30–60 C",
+            "Physical plausibility bound -30–60 C; intentional sensor anomalies remain inside this bound",
         ),
         (
             "sustainability_ratios",
@@ -100,6 +100,34 @@ def validate_data(data: pd.DataFrame) -> pd.DataFrame:
             "Ratios non-negative",
         ),
     ]
+    outlier_columns = numeric + [
+        column
+        for column in [
+            "external_temperature_c",
+            "humidity_pct",
+            "server_utilisation_pct",
+            "pue",
+            "wue_l_per_kwh",
+            "cue_kg_per_kwh",
+        ]
+        if column in data and column not in numeric
+    ]
+    z = (
+        (data[outlier_columns] - data[outlier_columns].mean())
+        / data[outlier_columns].std().replace(0, 1)
+    ).abs()
+    extreme = z.gt(6).any(axis=1)
+    unexplained = extreme & ~data.get(
+        "anomaly_ground_truth", pd.Series(0, index=data.index)
+    ).astype(bool)
+    checks.append(
+        (
+            "unexplained_extreme_outliers",
+            not unexplained.any(),
+            int(unexplained.sum()),
+            f"{int(extreme.sum())} extreme rows; labelled injected anomalies are retained",
+        )
+    )
     for site, group in data.groupby("site"):
         continuity = (
             group["timestamp"]

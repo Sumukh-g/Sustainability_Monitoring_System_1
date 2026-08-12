@@ -7,15 +7,21 @@ hero("Cooling analytics", "Demand, energy, efficiency and likely operating drive
 d, _ = filtered_data()
 if d.empty:
     st.stop()
-st.plotly_chart(
-    px.line(
-        d,
-        x="timestamp",
-        y=["cooling_demand_kw", "cooling_energy_kwh"],
-        title="Cooling demand and energy",
-    ),
-    use_container_width=True,
+cooling_figure = px.line(
+    d,
+    x="timestamp",
+    y=["cooling_demand_kw", "cooling_energy_kwh"],
+    title="Cooling demand and energy",
 )
+cooling_events = d[(d.anomaly_ground_truth == 1) & (d.anomaly_type == "Cooling fault")]
+cooling_figure.add_scatter(
+    x=cooling_events.timestamp,
+    y=cooling_events.cooling_demand_kw,
+    mode="markers",
+    name="Injected cooling event",
+    marker={"color": "#d62728", "size": 9},
+)
+st.plotly_chart(cooling_figure, use_container_width=True)
 c1, c2 = st.columns(2)
 c1.plotly_chart(
     px.scatter(
