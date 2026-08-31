@@ -1,0 +1,9 @@
+pue_warning: 1.60
+pue_critical: 1.90
+wue_warning_l_per_kwh: 1.80
+cue_warning_kg_per_kwh: 0.35
+server_utilisation_low_pct: 30
+carbon_intensity_high_g_per_kwh: 350
+cooling_efficiency_low: 2.8
+energy_peak_percentile: 0.95
+
