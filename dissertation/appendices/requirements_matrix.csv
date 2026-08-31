@@ -1,0 +1,16 @@
+ID,Requirement,Priority,Status,Evidence
+FR-01,Generate reproducible multi-site hourly synthetic telemetry,Must,Implemented,src/data_generation.py; data/generated/data_centre_hourly.csv
+FR-02,Validate schema and data quality,Must,Implemented,src/data_loader.py; reports/evaluation/data_quality_report.csv
+FR-03,Compute PUE WUE CUE and project score,Must,Implemented,src/sustainability_metrics.py; sustainability_kpi_summary.csv
+FR-04,Leakage-safe feature engineering and chronological split,Must,Implemented,src/feature_engineering.py; tests/test_preprocessing.py
+FR-05,Compare baseline and ML forecasters for three targets,Must,Implemented,src/forecasting.py; model_comparison.csv
+FR-06,Persist selected models and metadata,Must,Implemented,models/forecasting; models/metadata
+FR-07,Isolation Forest anomaly detection with metrics,Must,Implemented,src/anomaly_detection.py; anomaly_metrics.json
+FR-08,Threshold alerts and data-linked recommendations,Must,Implemented,src/alerts.py; src/recommendations.py
+FR-09,Multi-page Streamlit decision-support dashboard,Must,Implemented,app.py; pages/; runtime screenshots
+FR-10,Research figures and evaluation artefacts,Must,Implemented,reports/figures; reports/FINAL_RESULTS.md
+FR-11,Automated tests and project validator,Must,Implemented,pytest 12/12; validate_project.py 19/19
+FR-12,Scenario Lab what-if simulation,Should,Implemented,pages/8_Scenario_Lab.py
+NFR-01,Reproducible seeds and configuration,Must,Implemented,config/settings.yaml; random_seed 42
+NFR-02,Local execution without deployment URL,Must,Implemented,README streamlit run app.py
+NFR-03,No fabricated usability findings,Must,Implemented,reports/usability_questionnaire.md unused
