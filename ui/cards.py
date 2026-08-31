@@ -84,7 +84,7 @@ def site_card(
                 <div style="font-weight:700;font-size:0.95rem;color:{TEXT}">{name}</div>
                 <span class="eco-status eco-status-{'optimal' if health >= 90 else 'warning' if health >= 70 else 'critical'}">{health}% Health</span>
             </div>
-            <div style="display:flex;gap:1.5rem;font-size:0.82rem;color:{TEXT_SECONDARY}">
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:0.82rem;color:{TEXT_SECONDARY}">
                 <div>PUE <span style="color:{TEXT};font-weight:600">{pue:.2f}</span></div>
                 <div>Carbon <span style="color:{carbon_color};font-weight:600">{carbon_level}</span></div>
                 <div>Alerts <span style="color:{alert_color};font-weight:600">{alerts}</span></div>

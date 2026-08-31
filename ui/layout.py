@@ -81,12 +81,12 @@ def global_filters(show_aggregation: bool = True):
             key="global_site",
         )
         mn, mx = data.timestamp.min().date(), data.timestamp.max().date()
-        # Quick presets
+        # Vertical presets avoid cramped chip overlap in the narrow sidebar
         preset = st.radio(
             "Period",
             ["24H", "7D", "30D", "90D", "1Y", "Custom"],
             index=2,
-            horizontal=True,
+            horizontal=False,
             key="time_preset",
         )
         if preset == "Custom":

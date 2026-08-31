@@ -17,24 +17,74 @@ html, body, .stApp {{
     background-color: {BG_DARK} !important;
     color: {TEXT} !important;
     font-family: {FONT_STACK} !important;
+    overflow-x: hidden !important;
 }}
-.stApp > header {{display: none !important;}}
-#MainMenu {{display: none !important;}}
+/* Keep Streamlit header visible so the sidebar reopen control works.
+   Hide only chrome/menu noise, not the collapsed-control button. */
+.stApp > header,
+header[data-testid="stHeader"] {{
+    display: block !important;
+    visibility: visible !important;
+    background: transparent !important;
+    height: 3.25rem !important;
+    z-index: 1000000 !important;
+}}
+#MainMenu {{visibility: hidden !important;}}
 footer {{display: none !important;}}
-[data-testid="stToolbar"] {{display: none !important;}}
+[data-testid="stToolbar"] {{visibility: hidden !important; height: 0 !important;}}
 [data-testid="stDecoration"] {{display: none !important;}}
+[data-testid="stStatusWidget"] {{visibility: hidden !important;}}
+
+/* Explicitly keep sidebar expand/collapse controls clickable */
+[data-testid="collapsedControl"],
+[data-testid="stExpandSidebarButton"],
+[data-testid="stSidebarCollapsedControl"],
+button[kind="header"],
+button[data-testid="baseButton-header"] {{
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 1000001 !important;
+    position: relative !important;
+    color: {TEXT} !important;
+    background: {BG_CARD} !important;
+    border: 1px solid {BORDER} !important;
+    border-radius: 8px !important;
+}}
+[data-testid="stSidebarCollapseButton"] {{
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 1000001 !important;
+}}
+
 .block-container {{
-    padding: 1.5rem 2rem 2rem 2rem !important;
+    padding: 3.5rem 1.5rem 2rem 1.5rem !important;
     max-width: 1400px !important;
+    overflow-x: hidden !important;
+}}
+section.main > div {{
+    overflow-x: hidden !important;
+}}
+.stMarkdown, .stMarkdown p, .stMarkdown div, .eco-card, .eco-hero, .eco-value, .eco-value-sm {{
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
 }}
 
 /* ── Sidebar ──────────────────────────────────────────────── */
 [data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0d1117 0%, #0a0e14 100%) !important;
     border-right: 1px solid {BORDER} !important;
+    z-index: 999990 !important;
+}}
+[data-testid="stSidebar"][aria-expanded="true"] {{
+    min-width: 18rem !important;
 }}
 [data-testid="stSidebar"] .block-container {{
-    padding: 1rem 0.8rem !important;
+    padding: 1rem 0.8rem 2rem 0.8rem !important;
+    overflow-x: hidden !important;
 }}
 [data-testid="stSidebar"] [data-testid="stMarkdown"] p {{
     color: {TEXT_SECONDARY} !important;
@@ -61,6 +111,14 @@ footer {{display: none !important;}}
     color: {TEXT_SECONDARY} !important;
     font-weight: 500;
 }}
+/* Period radio chips: wrap instead of overlapping */
+[data-testid="stSidebar"] [role="radiogroup"] {{
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+}}
+[data-testid="stSidebar"] [data-baseweb="radio"] {{
+    margin-right: 0.15rem !important;
+}}
 /* Sidebar nav links */
 [data-testid="stSidebar"] a[data-testid="stSidebarNavLink"] {{
     color: {TEXT_SECONDARY} !important;
@@ -68,6 +126,8 @@ footer {{display: none !important;}}
     padding: 0.35rem 0.6rem !important;
     font-size: 0.85rem !important;
     transition: all 0.15s ease;
+    white-space: normal !important;
+    line-height: 1.25 !important;
 }}
 [data-testid="stSidebar"] a[data-testid="stSidebarNavLink"]:hover {{
     background: rgba(0,212,170,0.06) !important;
@@ -167,7 +227,23 @@ footer {{display: none !important;}}
 /* ── Dataframes ───────────────────────────────────────────── */
 [data-testid="stDataFrame"] {{
     border-radius: 10px !important;
-    overflow: hidden;
+    overflow: auto !important;
+    max-width: 100% !important;
+}}
+div[data-testid="stHorizontalBlock"] {{
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+}}
+div[data-testid="column"] {{
+    min-width: 0 !important;
+    overflow: hidden !important;
+}}
+.stPlotlyChart, [data-testid="stPlotlyChart"] {{
+    max-width: 100% !important;
+    overflow: hidden !important;
+}}
+iframe {{
+    max-width: 100% !important;
 }}
 
 /* ── Dividers ─────────────────────────────────────────────── */
@@ -196,18 +272,22 @@ hr {{
     border-radius: 16px;
     padding: 1.5rem 2rem;
     margin-bottom: 1.5rem;
+    overflow: hidden;
+    max-width: 100%;
 }}
 .eco-hero h1 {{
     color: {TEXT};
-    font-size: 1.8rem;
+    font-size: clamp(1.25rem, 2.2vw, 1.8rem);
     font-weight: 800;
     margin: 0 0 0.3rem 0;
     letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
 }}
 .eco-hero p {{
     color: {TEXT_SECONDARY};
     font-size: 0.92rem;
     margin: 0;
+    overflow-wrap: anywhere;
 }}
 
 .eco-card {{
@@ -216,6 +296,8 @@ hr {{
     border-radius: 12px;
     padding: 1.2rem;
     margin-bottom: 0.8rem;
+    overflow: hidden;
+    max-width: 100%;
 }}
 .eco-card-highlight {{
     background: {BG_CARD};
@@ -224,6 +306,8 @@ hr {{
     padding: 1.2rem;
     margin-bottom: 0.8rem;
     box-shadow: 0 0 20px rgba(0,212,170,0.04);
+    overflow: hidden;
+    max-width: 100%;
 }}
 
 .eco-label {{
@@ -233,17 +317,20 @@ hr {{
     letter-spacing: 0.1em;
     font-weight: 600;
     margin-bottom: 0.3rem;
+    overflow-wrap: anywhere;
 }}
 .eco-value {{
     color: {TEXT};
-    font-size: 1.5rem;
+    font-size: clamp(1.05rem, 1.8vw, 1.5rem);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }}
 .eco-value-sm {{
     color: {TEXT};
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
     font-weight: 600;
+    overflow-wrap: anywhere;
 }}
 .eco-delta {{
     font-size: 0.78rem;
