@@ -187,33 +187,33 @@ if not filtered_events.empty:
 
     inv1, inv2 = st.columns([1, 1])
     with inv1:
-        st.markdown(
-            f"""<div class="eco-card">
-                <div class="eco-label">INCIDENT DETAILS</div>
-                <div style="margin-top:0.6rem;font-size:0.88rem;color:{TEXT_SECONDARY};line-height:1.8">
-                    <b style="color:{TEXT}">Timestamp:</b> {str(sel_event.get('timestamp', ''))[:19]}<br>
-                    <b style="color:{TEXT}">Anomaly Score:</b> {sel_event.get('anomaly_score', 0):.4f}<br>
-                    <b style="color:{TEXT}">Affected Metric:</b> {str(sel_event.get('affected_metric', '')).replace('_', ' ').title()}<br>
-                    <b style="color:{TEXT}">Expected Range:</b> {sel_event.get('expected_range', 'N/A')}<br>
-                    <b style="color:{TEXT}">Observed Value:</b> {sel_event.get('observed_value', 0):.2f}<br>
-                    <b style="color:{TEXT}">Severity:</b> <span style="color:{severity_color(str(sel_event.get('severity', 'Medium')))}">{sel_event.get('severity', 'N/A')}</span>
-                </div>
-            </div>""",
-            unsafe_allow_html=True,
+        st.html(
+            f'<div class="eco-card">'
+            f'<div class="eco-label">INCIDENT DETAILS</div>'
+            f'<div style="margin-top:0.6rem;font-size:0.88rem;color:{TEXT_SECONDARY};line-height:1.75">'
+            f'<b style="color:{TEXT}">Timestamp:</b> {str(sel_event.get("timestamp", ""))[:19]}<br>'
+            f'<b style="color:{TEXT}">Anomaly Score:</b> {sel_event.get("anomaly_score", 0):.4f}<br>'
+            f'<b style="color:{TEXT}">Affected Metric:</b> {str(sel_event.get("affected_metric", "")).replace("_", " ").title()}<br>'
+            f'<b style="color:{TEXT}">Expected Range:</b> {sel_event.get("expected_range", "N/A")}<br>'
+            f'<b style="color:{TEXT}">Observed Value:</b> {sel_event.get("observed_value", 0):.2f}<br>'
+            f'<b style="color:{TEXT}">Severity:</b> '
+            f'<span style="color:{severity_color(str(sel_event.get("severity", "Medium")))}">'
+            f'{sel_event.get("severity", "N/A")}</span></div></div>'
         )
 
     with inv2:
-        st.markdown(
-            f"""<div class="eco-card">
-                <div class="eco-label">ROOT CAUSE ANALYSIS</div>
-                <div style="margin-top:0.6rem">
-                    <div style="font-size:0.78rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem">Probable Explanation</div>
-                    <div style="font-size:0.88rem;color:{TEXT_SECONDARY};margin-bottom:0.8rem">{sel_event.get('probable_explanation', 'N/A')}</div>
-                    <div style="font-size:0.78rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem">Suggested Action</div>
-                    <div style="font-size:0.88rem;color:{CYAN}">{sel_event.get('suggested_action', 'N/A')}</div>
-                </div>
-            </div>""",
-            unsafe_allow_html=True,
+        st.html(
+            f'<div class="eco-card">'
+            f'<div class="eco-label">ROOT CAUSE ANALYSIS</div>'
+            f'<div style="margin-top:0.6rem">'
+            f'<div style="font-size:0.78rem;color:{TEXT_MUTED};text-transform:uppercase;'
+            f'letter-spacing:0.08em;margin-bottom:0.3rem">Probable Explanation</div>'
+            f'<div style="font-size:0.88rem;color:{TEXT_SECONDARY};margin-bottom:0.8rem;line-height:1.45">'
+            f'{sel_event.get("probable_explanation", "N/A")}</div>'
+            f'<div style="font-size:0.78rem;color:{TEXT_MUTED};text-transform:uppercase;'
+            f'letter-spacing:0.08em;margin-bottom:0.3rem">Suggested Action</div>'
+            f'<div style="font-size:0.88rem;color:{CYAN};line-height:1.45">'
+            f'{sel_event.get("suggested_action", "N/A")}</div></div></div>'
         )
 
     event_ts = pd.Timestamp(sel_event["timestamp"])

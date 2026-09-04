@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 import plotly.graph_objects as go
-import streamlit as st
 from ui.theme import (
-    BG_CARD, BORDER, TEXT, TEXT_MUTED, GREEN, GREEN_DIM,
-    CYAN, YELLOW, ORANGE, RED,
+    TEXT, TEXT_MUTED, GREEN,
+    YELLOW, RED,
     score_color, score_label,
 )
 
 
-def sustainability_gauge(score: float, height: int = 260):
+def sustainability_gauge(score: float, height: int = 280):
     """Hero sustainability gauge — the dominant visual on the Command Center."""
     color = score_color(score)
     label = score_label(score)
@@ -18,13 +17,18 @@ def sustainability_gauge(score: float, height: int = 260):
         mode="gauge+number",
         value=score,
         number=dict(
-            font=dict(size=52, color=TEXT, weight=800),
-            suffix="",
+            font=dict(size=48, color=TEXT),
+            valueformat=".0f",
+        ),
+        title=dict(
+            text=f"<b style='color:{color}'>{label}</b><br>"
+                 f"<span style='font-size:11px;color:{TEXT_MUTED}'>SUSTAINABILITY SCORE</span>",
+            font=dict(size=14, color=color),
         ),
         gauge=dict(
             axis=dict(range=[0, 100], visible=False),
             bar=dict(color=color, thickness=0.82),
-            bgcolor="rgba(30,30,30,0.5)",
+            bgcolor="rgba(17,17,17,0.9)",
             borderwidth=0,
             steps=[
                 dict(range=[0, 30], color="rgba(255,51,102,0.08)"),
@@ -42,47 +46,40 @@ def sustainability_gauge(score: float, height: int = 260):
     ))
     fig.update_layout(
         height=height,
-        margin=dict(l=30, r=30, t=20, b=20),
-        annotations=[
-            dict(
-                text=f"<b>{label}</b>",
-                x=0.5, y=0.15,
-                font=dict(size=13, color=color),
-                showarrow=False,
-                xref="paper", yref="paper",
-            ),
-            dict(
-                text="SUSTAINABILITY SCORE",
-                x=0.5, y=-0.02,
-                font=dict(size=10, color=TEXT_MUTED),
-                showarrow=False,
-                xref="paper", yref="paper",
-            ),
-        ],
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=24, r=24, t=56, b=16),
+        font=dict(color=TEXT),
     )
     return fig
 
 
-def efficiency_mini_gauge(value: float, label: str, max_val: float = 100, height: int = 150):
+def efficiency_mini_gauge(value: float, label: str, max_val: float = 100, height: int = 160):
     """Smaller efficiency sub-gauge for Energy/Water/Carbon/Cooling."""
     color = score_color(value)
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        number=dict(font=dict(size=24, color=TEXT, weight=700), suffix="%"),
-        title=dict(text=label, font=dict(size=10, color=TEXT_MUTED)),
+        number=dict(font=dict(size=22, color=TEXT), suffix="%"),
+        title=dict(text=label, font=dict(size=11, color=TEXT_MUTED)),
         gauge=dict(
             axis=dict(range=[0, max_val], visible=False),
             bar=dict(color=color, thickness=0.75),
-            bgcolor="rgba(30,30,30,0.4)",
+            bgcolor="rgba(17,17,17,0.85)",
             borderwidth=0,
         ),
     ))
-    fig.update_layout(height=height, margin=dict(l=20, r=20, t=35, b=5))
+    fig.update_layout(
+        height=height,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=12, r=12, t=40, b=8),
+        font=dict(color=TEXT),
+    )
     return fig
 
 
-def pue_gauge(pue: float, height: int = 180):
+def pue_gauge(pue: float, height: int = 190):
     """PUE-specific gauge (lower is better, range 1.0-2.5)."""
     if pue < 1.2:
         color = GREEN
@@ -96,12 +93,12 @@ def pue_gauge(pue: float, height: int = 180):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=pue,
-        number=dict(font=dict(size=28, color=TEXT, weight=700), valueformat=".2f"),
-        title=dict(text="PUE", font=dict(size=10, color=TEXT_MUTED)),
+        number=dict(font=dict(size=26, color=TEXT), valueformat=".2f"),
+        title=dict(text="PUE", font=dict(size=11, color=TEXT_MUTED)),
         gauge=dict(
             axis=dict(range=[1.0, 2.5], tickfont=dict(size=9, color=TEXT_MUTED)),
             bar=dict(color=color, thickness=0.7),
-            bgcolor="rgba(30,30,30,0.4)",
+            bgcolor="rgba(17,17,17,0.85)",
             borderwidth=0,
             steps=[
                 dict(range=[1.0, 1.2], color="rgba(0,212,170,0.08)"),
@@ -111,5 +108,11 @@ def pue_gauge(pue: float, height: int = 180):
             ],
         ),
     ))
-    fig.update_layout(height=height, margin=dict(l=20, r=20, t=30, b=5))
+    fig.update_layout(
+        height=height,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=16, r=16, t=36, b=8),
+        font=dict(color=TEXT),
+    )
     return fig

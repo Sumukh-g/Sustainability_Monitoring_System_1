@@ -34,15 +34,16 @@ def _status_card(name: str, status: str, details: str, icon: str = ""):
     """Render a system component status card."""
     color, label = _status_dot(status)
     icon_html = f"{icon} " if icon else ""
-    st.markdown(
-        f"""<div style="background:{BG_CARD};border:1px solid {BORDER};border-radius:12px;padding:1rem 1.2rem;margin-bottom:0.6rem">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">
-                <span style="font-weight:700;font-size:0.92rem;color:{TEXT}">{icon_html}{name}</span>
-                <span style="background:{color}18;color:{color};border:1px solid {color}40;border-radius:20px;padding:0.12rem 0.6rem;font-size:0.68rem;font-weight:700;letter-spacing:0.06em">{label}</span>
-            </div>
-            <div style="color:{TEXT_MUTED};font-size:0.8rem">{details}</div>
-        </div>""",
-        unsafe_allow_html=True,
+    st.html(
+        f'<div style="background:{BG_CARD};border:1px solid {BORDER};border-radius:12px;'
+        f'padding:1rem 1.15rem;margin-bottom:0.55rem">'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;'
+        f'gap:0.5rem;margin-bottom:0.4rem;flex-wrap:wrap">'
+        f'<span style="font-weight:700;font-size:0.92rem;color:{TEXT}">{icon_html}{name}</span>'
+        f'<span style="background:{color}18;color:{color};border:1px solid {color}40;'
+        f'border-radius:20px;padding:0.12rem 0.6rem;font-size:0.68rem;font-weight:700;'
+        f'letter-spacing:0.06em">{label}</span></div>'
+        f'<div style="color:{TEXT_MUTED};font-size:0.8rem;line-height:1.4">{details}</div></div>'
     )
 
 
@@ -220,21 +221,20 @@ artifacts = {
 }
 
 for category, files in artifacts.items():
-    st.markdown(
+    st.html(
         f'<div style="color:{TEXT_SECONDARY};font-size:0.78rem;font-weight:600;letter-spacing:0.08em;'
-        f'text-transform:uppercase;margin-top:1rem;margin-bottom:0.4rem">{category}</div>',
-        unsafe_allow_html=True,
+        f'text-transform:uppercase;margin-top:1rem;margin-bottom:0.4rem">{category}</div>'
     )
     for file_path, description in files:
         exists = Path(file_path).exists()
         dot_color = GREEN if exists else RED
         status_label = "Found" if exists else "Missing"
-        st.markdown(
-            f"""<div style="background:{BG_CARD};border:1px solid {BORDER};border-radius:8px;padding:0.5rem 0.8rem;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.6rem;font-size:0.82rem">
-                <span style="color:{dot_color}">●</span>
-                <span style="color:{TEXT};flex:1">{description}</span>
-                <span style="color:{TEXT_MUTED};font-size:0.72rem;font-family:monospace">{file_path}</span>
-                <span style="color:{dot_color};font-size:0.68rem;font-weight:600">{status_label}</span>
-            </div>""",
-            unsafe_allow_html=True,
+        st.html(
+            f'<div style="background:{BG_CARD};border:1px solid {BORDER};border-radius:8px;'
+            f'padding:0.55rem 0.8rem;margin-bottom:0.3rem;display:flex;align-items:center;'
+            f'gap:0.6rem;font-size:0.82rem;flex-wrap:wrap">'
+            f'<span style="color:{dot_color}">●</span>'
+            f'<span style="color:{TEXT};flex:1;min-width:120px">{description}</span>'
+            f'<span style="color:{TEXT_MUTED};font-size:0.72rem;font-family:monospace">{file_path}</span>'
+            f'<span style="color:{dot_color};font-size:0.68rem;font-weight:600">{status_label}</span></div>'
         )

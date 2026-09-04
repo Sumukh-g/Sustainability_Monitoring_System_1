@@ -34,7 +34,7 @@ if data.empty:
 settings, thresholds = get_config()
 
 # ── Controls ─────────────────────────────────────────────────────────
-ctrl1, ctrl2 = st.columns([1, 2])
+ctrl1, ctrl2 = st.columns(2)
 with ctrl1:
     target = st.selectbox(
         "Forecast Target",
@@ -83,6 +83,10 @@ try:
         height=400,
         xaxis_title="Time",
         yaxis_title=target_label,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=52, r=28, t=72, b=44),
+        legend=dict(orientation="h", yanchor="bottom", y=1.06, x=0),
     )
     show(fig_forecast, key="fc_overlay")
 

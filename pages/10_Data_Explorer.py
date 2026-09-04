@@ -88,16 +88,15 @@ with tab_quality:
             status_text = "PASS" if passed else "FAIL"
             count_info = f" ({row['count']} issues)" if not passed and row["count"] > 0 else ""
 
-            st.markdown(
-                f"""<div style="background:{BG_CARD};border:1px solid {BORDER};border-radius:10px;padding:0.8rem 1rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.8rem">
-                    <span style="color:{dot_color};font-size:1.2rem">●</span>
-                    <div style="flex:1">
-                        <div style="font-weight:600;color:{TEXT};font-size:0.9rem">{row['check'].replace('_', ' ').title()}</div>
-                        <div style="color:{TEXT_MUTED};font-size:0.78rem">{row['detail']}{count_info}</div>
-                    </div>
-                    <span style="color:{dot_color};font-size:0.72rem;font-weight:700;letter-spacing:0.08em">{status_text}</span>
-                </div>""",
-                unsafe_allow_html=True,
+            st.html(
+                f'<div style="background:{BG_CARD};border:1px solid {BORDER};border-radius:10px;'
+                f'padding:0.8rem 1rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">'
+                f'<span style="color:{dot_color};font-size:1.2rem">●</span>'
+                f'<div style="flex:1;min-width:160px">'
+                f'<div style="font-weight:600;color:{TEXT};font-size:0.9rem">{row["check"].replace("_", " ").title()}</div>'
+                f'<div style="color:{TEXT_MUTED};font-size:0.78rem;line-height:1.35">{row["detail"]}{count_info}</div>'
+                f'</div>'
+                f'<span style="color:{dot_color};font-size:0.72rem;font-weight:700;letter-spacing:0.08em">{status_text}</span></div>'
             )
 
     except Exception as e:

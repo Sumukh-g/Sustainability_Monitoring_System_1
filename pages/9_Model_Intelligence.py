@@ -139,10 +139,9 @@ try:
     fig_fi.update_traces(marker_color=GREEN)
     show(fig_fi, key="feature_importance")
 
-    st.markdown(
-        f'<div class="eco-insight">These values represent statistical associations learned by the model. '
-        f'They do not establish causal relationships between features and the target variable.</div>',
-        unsafe_allow_html=True,
+    st.html(
+        '<div class="eco-insight">These values represent statistical associations learned by the model. '
+        'They do not establish causal relationships between features and the target variable.</div>'
     )
 
 except Exception:

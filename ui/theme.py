@@ -63,7 +63,7 @@ _layout = go.Layout(
         font=dict(size=11, color=TEXT_SECONDARY),
         orientation="h",
         yanchor="bottom",
-        y=1.02,
+        y=1.06,
         xanchor="left",
         x=0,
     ),

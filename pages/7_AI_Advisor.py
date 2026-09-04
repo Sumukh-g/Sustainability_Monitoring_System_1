@@ -134,7 +134,7 @@ matrix_html = f"""
     </div>
 </div>
 """
-st.markdown(matrix_html, unsafe_allow_html=True)
+st.html(matrix_html)
 
 # ── Section: Recommendation Cards ────────────────────────────────────
 section_header(
@@ -154,44 +154,35 @@ for _, r in recs.iterrows():
     p_color = priority_colors.get(r["priority"], TEXT_MUTED)
     confidence_pct = f"{r['confidence']:.0%}" if r["confidence"] <= 1 else f"{r['confidence']:.0f}%"
 
-    card_html = f"""
-    <div style="background:{BG_CARD};border:1px solid {BORDER};border-left:4px solid {p_color};
-                border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem">
-            <div style="font-size:1.05rem;font-weight:700;color:{TEXT}">{r['title']}</div>
-            <span style="background:rgba({_hex_to_rgb(p_color)},0.12);color:{p_color};
-                         padding:0.2rem 0.6rem;border-radius:20px;font-size:0.72rem;
-                         font-weight:600;letter-spacing:0.05em;text-transform:uppercase;
-                         border:1px solid rgba({_hex_to_rgb(p_color)},0.25)">
-                {r['priority']}
-            </span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem 1.5rem">
-            <div>
-                <div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">WHY</div>
-                <div style="font-size:0.88rem;color:{TEXT_SECONDARY}">{r['triggered_by']}</div>
-            </div>
-            <div>
-                <div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">CURRENT STATE</div>
-                <div style="font-size:0.88rem;color:{TEXT_SECONDARY}">{r['metric']} = <span style="color:{TEXT};font-weight:600">{r['current_value']}</span> <span style="color:{TEXT_MUTED}">(reference: {r['reference_value']})</span></div>
-            </div>
-            <div style="grid-column:1/-1">
-                <div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">RECOMMENDED ACTION</div>
-                <div style="font-size:0.88rem;color:{CYAN}">{r['recommended_action']}</div>
-            </div>
-            <div>
-                <div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">EXPECTED IMPACT</div>
-                <div style="font-size:0.88rem;color:{GREEN}">{r['expected_benefit']}</div>
-            </div>
-            <div>
-                <div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">CONFIDENCE</div>
-                <div style="font-size:0.88rem;color:{TEXT}">{confidence_pct}</div>
-            </div>
-        </div>
-        <div style="margin-top:0.7rem;font-size:0.78rem;color:{TEXT_MUTED};font-style:italic;
-                    border-top:1px solid {BORDER};padding-top:0.6rem">
-            {r['explanation']}
-        </div>
-    </div>
-    """
-    st.markdown(card_html, unsafe_allow_html=True)
+    card_html = (
+        f'<div style="background:{BG_CARD};border:1px solid {BORDER};border-left:4px solid {p_color};'
+        f'border-radius:12px;padding:1.15rem 1.25rem;margin-bottom:0.9rem">'
+        f'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;'
+        f'margin-bottom:0.8rem;flex-wrap:wrap">'
+        f'<div style="font-size:1.02rem;font-weight:700;color:{TEXT};line-height:1.35">{r["title"]}</div>'
+        f'<span style="background:rgba({_hex_to_rgb(p_color)},0.12);color:{p_color};'
+        f'padding:0.2rem 0.6rem;border-radius:20px;font-size:0.72rem;font-weight:600;'
+        f'letter-spacing:0.05em;text-transform:uppercase;border:1px solid rgba({_hex_to_rgb(p_color)},0.25);'
+        f'white-space:nowrap">{r["priority"]}</span></div>'
+        f'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem 1.25rem">'
+        f'<div><div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;'
+        f'letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">WHY</div>'
+        f'<div style="font-size:0.88rem;color:{TEXT_SECONDARY};line-height:1.4">{r["triggered_by"]}</div></div>'
+        f'<div><div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;'
+        f'letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">CURRENT STATE</div>'
+        f'<div style="font-size:0.88rem;color:{TEXT_SECONDARY};line-height:1.4">{r["metric"]} = '
+        f'<span style="color:{TEXT};font-weight:600">{r["current_value"]}</span> '
+        f'<span style="color:{TEXT_MUTED}">(reference: {r["reference_value"]})</span></div></div>'
+        f'<div style="grid-column:1/-1"><div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;'
+        f'letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">RECOMMENDED ACTION</div>'
+        f'<div style="font-size:0.88rem;color:{CYAN};line-height:1.4">{r["recommended_action"]}</div></div>'
+        f'<div><div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;'
+        f'letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">EXPECTED IMPACT</div>'
+        f'<div style="font-size:0.88rem;color:{GREEN};line-height:1.4">{r["expected_benefit"]}</div></div>'
+        f'<div><div style="font-size:0.68rem;color:{TEXT_MUTED};text-transform:uppercase;'
+        f'letter-spacing:0.1em;font-weight:600;margin-bottom:0.2rem">CONFIDENCE</div>'
+        f'<div style="font-size:0.88rem;color:{TEXT}">{confidence_pct}</div></div></div>'
+        f'<div style="margin-top:0.7rem;font-size:0.78rem;color:{TEXT_MUTED};font-style:italic;'
+        f'border-top:1px solid {BORDER};padding-top:0.6rem;line-height:1.45">{r["explanation"]}</div></div>'
+    )
+    st.html(card_html)

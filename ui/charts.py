@@ -21,8 +21,23 @@ def _hex_to_rgba(hex_color: str, alpha: float = 0.25) -> str:
     return f"rgba(100,100,100,{alpha})"
 
 
-def _base_fig(fig: go.Figure, height: int = 340) -> go.Figure:
-    fig.update_layout(height=height)
+def _chart_layout(fig: go.Figure, title: str = "", height: int = 340) -> go.Figure:
+    """Apply consistent spacing so titles and legends do not collide."""
+    fig.update_layout(
+        title=dict(text=title, y=0.98, pad=dict(b=8)) if title else None,
+        height=height,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=52, r=28, t=72 if title else 48, b=44),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.04,
+            xanchor="left",
+            x=0,
+            bgcolor="rgba(0,0,0,0)",
+        ),
+    )
     return fig
 
 
@@ -52,8 +67,7 @@ def trend_line(
             mode="markers",
             marker=dict(color=RED, size=7, symbol="diamond"),
         ))
-    fig.update_layout(title=title, height=height)
-    return fig
+    return _chart_layout(fig, title=title, height=height)
 
 
 def area_stack(
@@ -75,8 +89,7 @@ def area_stack(
             line=dict(width=0.5, color=base_color),
             fillcolor=fill,
         ))
-    fig.update_layout(title=title, height=height)
-    return fig
+    return _chart_layout(fig, title=title, height=height)
 
 
 def scatter(
@@ -92,9 +105,8 @@ def scatter(
         data, x=x, y=y, color=color, title=title, opacity=0.5,
         color_continuous_scale=[[0, CYAN], [0.5, GREEN], [1, ORANGE]],
     )
-    fig.update_layout(height=height)
     fig.update_traces(marker=dict(size=4))
-    return fig
+    return _chart_layout(fig, title="", height=height)
 
 
 def bar_chart(
@@ -112,8 +124,7 @@ def bar_chart(
         data, x=x if not horizontal else y, y=y if not horizontal else x,
         color=color, title=title, orientation=orientation,
     )
-    fig.update_layout(height=height)
-    return fig
+    return _chart_layout(fig, title="", height=height)
 
 
 def gauge(
@@ -135,7 +146,7 @@ def gauge(
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        number=dict(suffix=suffix, font=dict(size=32, color=TEXT, weight=700)),
+        number=dict(suffix=suffix, font=dict(size=32, color=TEXT)),
         title=dict(text=title, font=dict(size=12, color=TEXT_MUTED)),
         gauge=dict(
             axis=dict(range=[min_val, max_val], tickcolor=TEXT_MUTED, tickfont=dict(size=10, color=TEXT_MUTED)),
@@ -145,7 +156,12 @@ def gauge(
             steps=steps,
         ),
     ))
-    fig.update_layout(height=height, margin=dict(l=30, r=30, t=40, b=10))
+    fig.update_layout(
+        height=height,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=30, r=30, t=40, b=10),
+    )
     return fig
 
 
@@ -227,4 +243,10 @@ def heatmap_strip(
 
 def show(fig: go.Figure, key: str | None = None):
     """Render a Plotly figure in the EcoNexus style."""
-    st.plotly_chart(fig, width="stretch", key=key)
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        theme=None,
+        key=key,
+        config={"displayModeBar": False, "responsive": True},
+    )

@@ -37,21 +37,19 @@ def page_chrome(title: str, subtitle: str = "", icon: str = ""):
     _sidebar_branding()
     icon_html = f"{icon} " if icon else ""
     sub = f"<p>{subtitle}</p>" if subtitle else ""
-    st.markdown(
-        f'<div class="eco-hero"><h1>{icon_html}{title}</h1>{sub}</div>',
-        unsafe_allow_html=True,
-    )
+    st.html(f'<div class="eco-hero"><h1>{icon_html}{title}</h1>{sub}</div>')
 
 
 def _sidebar_branding():
     """Render sidebar product identity and status."""
     with st.sidebar:
-        st.markdown(
-            f"""<div style="text-align:center;padding:0.6rem 0 0.8rem 0">
-                <div style="font-size:1.3rem;font-weight:800;color:{GREEN};letter-spacing:0.06em">{PRODUCT_NAME}</div>
-                <div style="font-size:0.65rem;color:{TEXT_MUTED};letter-spacing:0.08em;text-transform:uppercase;margin-top:0.15rem">{PRODUCT_SUBTITLE}</div>
-            </div>""",
-            unsafe_allow_html=True,
+        st.html(
+            f'<div style="text-align:center;padding:0.45rem 0 0.7rem 0">'
+            f'<div style="font-size:1.25rem;font-weight:800;color:{GREEN};letter-spacing:0.05em">'
+            f'{PRODUCT_NAME}</div>'
+            f'<div style="font-size:0.7rem;color:{TEXT_SECONDARY};letter-spacing:0.06em;'
+            f'text-transform:uppercase;margin-top:0.2rem;line-height:1.35">{PRODUCT_SUBTITLE}</div>'
+            f'</div>'
         )
         st.markdown("---")
 
@@ -112,9 +110,8 @@ def global_filters(show_aggregation: bool = True):
 
         st.markdown("---")
         _sidebar_system_status()
-        st.markdown(
-            f'<div style="text-align:center;color:{TEXT_DIM};font-size:0.65rem;padding-top:1rem">v{VERSION}</div>',
-            unsafe_allow_html=True,
+        st.html(
+            f'<div style="text-align:center;color:{TEXT_DIM};font-size:0.68rem;padding-top:1rem">v{VERSION}</div>'
         )
 
     if len(dates) != 2:
@@ -145,25 +142,23 @@ def _sidebar_system_status():
         return f'<span style="color:{c};font-size:0.7rem">●</span>'
 
     st.markdown("## System")
-    st.markdown(
-        f"""<div style="font-size:0.78rem;color:{TEXT_SECONDARY};line-height:1.7">
-            {dot(data_ok)} Data pipeline<br>
-            {dot(models_ok)} Forecast models<br>
-            {dot(True)} Anomaly engine<br>
-            {dot(True)} Recommendation engine
-        </div>""",
-        unsafe_allow_html=True,
+    st.html(
+        f'<div style="font-size:0.8rem;color:{TEXT_SECONDARY};line-height:1.75">'
+        f'{dot(data_ok)} Data pipeline<br>'
+        f'{dot(models_ok)} Forecast models<br>'
+        f'{dot(True)} Anomaly engine<br>'
+        f'{dot(True)} Recommendation engine</div>'
     )
 
 
 def empty_state(icon: str, title: str, message: str = ""):
     """Professional empty/loading state."""
-    msg = f'<div style="color:{TEXT_MUTED};font-size:0.85rem;margin-top:0.3rem">{message}</div>' if message else ""
-    st.markdown(
-        f"""<div style="text-align:center;padding:3rem 1rem;color:{TEXT_SECONDARY}">
-            <div style="font-size:2.5rem;margin-bottom:0.5rem">{icon}</div>
-            <div style="font-size:1rem;font-weight:600">{title}</div>
-            {msg}
-        </div>""",
-        unsafe_allow_html=True,
+    msg = (
+        f'<div style="color:{TEXT_MUTED};font-size:0.85rem;margin-top:0.35rem;line-height:1.4">{message}</div>'
+        if message else ""
+    )
+    st.html(
+        f'<div style="text-align:center;padding:3rem 1rem;color:{TEXT_SECONDARY}">'
+        f'<div style="font-size:2.5rem;margin-bottom:0.5rem">{icon}</div>'
+        f'<div style="font-size:1rem;font-weight:600;color:{TEXT}">{title}</div>{msg}</div>'
     )

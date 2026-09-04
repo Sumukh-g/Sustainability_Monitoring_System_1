@@ -173,7 +173,7 @@ compare_html += """
     </div>
 </div>
 """
-st.markdown(compare_html, unsafe_allow_html=True)
+st.html(compare_html)
 
 # ── Section: Estimated Impact ────────────────────────────────────────
 section_header(

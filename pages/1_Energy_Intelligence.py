@@ -68,13 +68,20 @@ spark_energy = sparkline_svg(
     .tolist()[-30:]
 )
 
-k1, k2, k3, k4, k5 = st.columns(5)
+mean_kwh = df.total_energy_kwh.mean()
+daily_totals = df.groupby(df.timestamp.dt.date).total_energy_kwh.sum()
+daily_max = daily_totals.max()
+peak_hour = int(df.groupby(df.timestamp.dt.hour).total_energy_kwh.mean().idxmax())
+
+k1, k2, k3 = st.columns(3)
 with k1:
     kpi_card("Facility Energy", f"{facility_mwh:,.1f} MWh", icon="⚡", sparkline_svg=spark_energy)
 with k2:
     kpi_card("IT Energy", f"{it_mwh:,.1f} MWh", icon="🖥️")
 with k3:
     kpi_card("Cooling Energy", f"{cool_mwh:,.1f} MWh", icon="❄️")
+
+k4, k5, k6 = st.columns(3)
 with k4:
     kpi_card(
         "Cooling Share", f"{cool_share:.1f}%", icon="📊",
@@ -82,15 +89,15 @@ with k4:
     )
 with k5:
     kpi_card("PUE", f"{avg_pue:.2f}", icon="⚙️", status=pue_label.lower())
+with k6:
+    kpi_card(
+        "Mean Hourly", f"{mean_kwh:,.0f} kWh", icon="📈",
+        status="good",
+    )
 
 # ── Energy Pulse ─────────────────────────────────────────────────────
 
 section_header("Energy Pulse", "Current energy status and peak prediction", "📊")
-
-mean_kwh = df.total_energy_kwh.mean()
-daily_totals = df.groupby(df.timestamp.dt.date).total_energy_kwh.sum()
-daily_max = daily_totals.max()
-peak_hour = int(df.groupby(df.timestamp.dt.hour).total_energy_kwh.mean().idxmax())
 
 stat_row([
     ("Mean Energy", f"{mean_kwh:,.0f}", "kWh / hour"),

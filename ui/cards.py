@@ -8,6 +8,11 @@ from ui.theme import (
 )
 
 
+def _html(markup: str) -> None:
+    """Render HTML without Markdown indent/code-block side effects."""
+    st.html(markup)
+
+
 def kpi_card(
     label: str,
     value: str,
@@ -33,33 +38,33 @@ def kpi_card(
 
     delta_html = f'<div class="eco-delta {delta_class}">{delta}</div>' if delta else ""
     status_html = (
-        f'<span class="eco-status {status_class}">{status}</span>' if status else ""
+        f'<div style="margin-top:0.45rem"><span class="eco-status {status_class}">{status}</span></div>'
+        if status else ""
     )
-    spark_html = f'<div style="margin-top:0.4rem">{sparkline_svg}</div>' if sparkline_svg else ""
+    spark_html = f'<div style="margin-top:0.45rem;line-height:0">{sparkline_svg}</div>' if sparkline_svg else ""
     icon_html = f'<span style="margin-right:0.3rem">{icon}</span>' if icon else ""
 
-    st.markdown(
-        f"""<div class="eco-card">
-            <div class="eco-label">{icon_html}{label}</div>
-            <div class="eco-value">{value}</div>
-            {delta_html}
-            <div style="margin-top:0.4rem">{status_html}</div>
-            {spark_html}
-        </div>""",
-        unsafe_allow_html=True,
+    _html(
+        f'<div class="eco-card">'
+        f'<div class="eco-label">{icon_html}{label}</div>'
+        f'<div class="eco-value">{value}</div>'
+        f'{delta_html}{status_html}{spark_html}'
+        f'</div>'
     )
 
 
 def kpi_card_compact(label: str, value: str, sub: str = "", color: str = TEXT):
     """A smaller metric card for secondary KPIs."""
-    sub_html = f'<div style="color:{TEXT_MUTED};font-size:0.75rem;margin-top:0.15rem">{sub}</div>' if sub else ""
-    st.markdown(
-        f"""<div class="eco-card" style="padding:0.8rem 1rem">
-            <div class="eco-label">{label}</div>
-            <div class="eco-value-sm" style="color:{color}">{value}</div>
-            {sub_html}
-        </div>""",
-        unsafe_allow_html=True,
+    sub_html = (
+        f'<div style="color:{TEXT_MUTED};font-size:0.75rem;margin-top:0.15rem;line-height:1.3">{sub}</div>'
+        if sub else ""
+    )
+    _html(
+        f'<div class="eco-card" style="padding:0.85rem 1rem;min-height:5.2rem">'
+        f'<div class="eco-label">{label}</div>'
+        f'<div class="eco-value-sm" style="color:{color}">{value}</div>'
+        f'{sub_html}'
+        f'</div>'
     )
 
 
@@ -72,25 +77,23 @@ def site_card(
     selected: bool = False,
 ):
     """Data-centre site status card."""
-    border = f"border-color: rgba(0,212,170,0.3);" if selected else ""
+    border = "border-color: rgba(0,212,170,0.3);" if selected else ""
     glow = "box-shadow: 0 0 20px rgba(0,212,170,0.06);" if selected else ""
-    health_color = GREEN if health >= 90 else YELLOW if health >= 70 else RED
     carbon_color = GREEN if carbon_level == "Low" else YELLOW if carbon_level == "Moderate" else ORANGE
     alert_color = RED if alerts > 2 else ORANGE if alerts > 0 else GREEN
+    health_cls = "optimal" if health >= 90 else "warning" if health >= 70 else "critical"
 
-    st.markdown(
-        f"""<div class="eco-card" style="{border}{glow}">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem">
-                <div style="font-weight:700;font-size:0.95rem;color:{TEXT}">{name}</div>
-                <span class="eco-status eco-status-{'optimal' if health >= 90 else 'warning' if health >= 70 else 'critical'}">{health}% Health</span>
-            </div>
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:0.82rem;color:{TEXT_SECONDARY}">
-                <div>PUE <span style="color:{TEXT};font-weight:600">{pue:.2f}</span></div>
-                <div>Carbon <span style="color:{carbon_color};font-weight:600">{carbon_level}</span></div>
-                <div>Alerts <span style="color:{alert_color};font-weight:600">{alerts}</span></div>
-            </div>
-        </div>""",
-        unsafe_allow_html=True,
+    _html(
+        f'<div class="eco-card" style="{border}{glow}">'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.6rem;flex-wrap:wrap">'
+        f'<div style="font-weight:700;font-size:0.95rem;color:{TEXT}">{name}</div>'
+        f'<span class="eco-status eco-status-{health_cls}">{health}% Health</span>'
+        f'</div>'
+        f'<div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:0.82rem;color:{TEXT_SECONDARY}">'
+        f'<div>PUE <span style="color:{TEXT};font-weight:600">{pue:.2f}</span></div>'
+        f'<div>Carbon <span style="color:{carbon_color};font-weight:600">{carbon_level}</span></div>'
+        f'<div>Alerts <span style="color:{alert_color};font-weight:600">{alerts}</span></div>'
+        f'</div></div>'
     )
 
 
@@ -111,46 +114,42 @@ def incident_card(
     }.get(severity, "eco-status-good")
 
     detail_items = "".join(
-        f'<div style="margin:0.15rem 0;color:{TEXT_SECONDARY};font-size:0.82rem">• {d}</div>'
+        f'<div style="margin:0.15rem 0;color:{TEXT_SECONDARY};font-size:0.82rem;line-height:1.35">• {d}</div>'
         for d in details
     )
     action_html = (
-        f'<div style="margin-top:0.6rem;padding:0.5rem 0.7rem;background:rgba(0,180,216,0.06);border-radius:8px;font-size:0.82rem;color:{CYAN}">'
+        f'<div style="margin-top:0.6rem;padding:0.5rem 0.7rem;background:rgba(0,180,216,0.06);'
+        f'border-radius:8px;font-size:0.82rem;color:{CYAN};line-height:1.4">'
         f'<span style="font-weight:600">Action:</span> {action}</div>'
-        if action
-        else ""
+        if action else ""
     )
 
-    st.markdown(
-        f"""<div class="eco-incident" style="border-left:3px solid {sev_color}">
-            <div class="eco-incident-header">
-                <span class="eco-status {status_cls}">{severity}</span>
-                <span style="color:{TEXT_MUTED};font-size:0.78rem">{timestamp}</span>
-            </div>
-            <div style="font-weight:600;font-size:0.95rem;color:{TEXT};margin-bottom:0.4rem">{title}</div>
-            {detail_items}
-            {action_html}
-        </div>""",
-        unsafe_allow_html=True,
+    _html(
+        f'<div class="eco-incident" style="border-left:3px solid {sev_color}">'
+        f'<div class="eco-incident-header">'
+        f'<span class="eco-status {status_cls}">{severity}</span>'
+        f'<span style="color:{TEXT_MUTED};font-size:0.78rem">{timestamp}</span>'
+        f'</div>'
+        f'<div style="font-weight:600;font-size:0.95rem;color:{TEXT};margin-bottom:0.4rem;line-height:1.35">{title}</div>'
+        f'{detail_items}{action_html}</div>'
     )
 
 
 def insight_card(text: str, level: str = "info"):
     """AI insight strip with colour-coded left border."""
     cls = {"warn": "eco-insight-warn", "crit": "eco-insight-crit"}.get(level, "")
-    st.markdown(f'<div class="eco-insight {cls}">{text}</div>', unsafe_allow_html=True)
+    _html(f'<div class="eco-insight {cls}">{text}</div>')
 
 
 def alert_strip(severity: str, message: str):
     """Compact alert row for the alert centre."""
     color = severity_color(severity)
-    st.markdown(
-        f"""<div class="eco-alert-strip">
-            <div class="eco-alert-dot" style="background:{color}"></div>
-            <span style="color:{color};font-weight:600;font-size:0.75rem;min-width:55px">{severity.upper()}</span>
-            <span>{message}</span>
-        </div>""",
-        unsafe_allow_html=True,
+    _html(
+        f'<div class="eco-alert-strip">'
+        f'<div class="eco-alert-dot" style="background:{color}"></div>'
+        f'<span style="color:{color};font-weight:600;font-size:0.75rem;min-width:4.2rem;flex-shrink:0">{severity.upper()}</span>'
+        f'<span style="line-height:1.4">{message}</span>'
+        f'</div>'
     )
 
 
@@ -158,23 +157,20 @@ def section_header(title: str, subtitle: str = "", icon: str = ""):
     """Styled section header within a page."""
     icon_html = f"{icon} " if icon else ""
     sub = f"<p>{subtitle}</p>" if subtitle else ""
-    st.markdown(
-        f'<div class="eco-section"><h2>{icon_html}{title}</h2>{sub}</div>',
-        unsafe_allow_html=True,
-    )
+    _html(f'<div class="eco-section"><h2>{icon_html}{title}</h2>{sub}</div>')
 
 
 def stat_row(items: list[tuple[str, str, str]]):
     """Render a horizontal row of label/value/unit tuples."""
     cells = "".join(
-        f'<div style="flex:1;text-align:center">'
+        f'<div style="flex:1 1 140px;text-align:center;padding:0.35rem 0.25rem;min-width:0">'
         f'<div class="eco-label">{label}</div>'
         f'<div class="eco-value-sm">{value}</div>'
-        f'<div style="color:{TEXT_MUTED};font-size:0.72rem">{unit}</div>'
+        f'<div style="color:{TEXT_MUTED};font-size:0.72rem;margin-top:0.15rem">{unit}</div>'
         f'</div>'
         for label, value, unit in items
     )
-    st.markdown(
-        f'<div style="display:flex;gap:0.5rem;background:{BG_CARD};border:1px solid {BORDER};border-radius:12px;padding:1rem">{cells}</div>',
-        unsafe_allow_html=True,
+    _html(
+        f'<div style="display:flex;flex-wrap:wrap;gap:0.35rem;background:{BG_CARD};'
+        f'border:1px solid {BORDER};border-radius:12px;padding:0.85rem 0.6rem">{cells}</div>'
     )
